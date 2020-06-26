@@ -1,0 +1,11 @@
+{
+  "name": "github-stargazers",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:leo2d/github-stargazers.git",
+  "author": "Leonardo Dias",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {}
+}
