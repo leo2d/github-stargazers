@@ -6,7 +6,9 @@
   "author": "Leonardo Dias",
   "license": "MIT",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "dotenv": "^8.2.0"
+  },
   "devDependencies": {
     "eslint": "^7.3.1",
     "eslint-config-airbnb-base": "^14.2.0",
