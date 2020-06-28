@@ -13,9 +13,12 @@ const path = getPath();
 
 dotenv.config({ path });
 
-// Environment variables
-const SERVER_PORT = parseInt(process.env.SERVER_PORT, 10);
+const server = require('./components/server');
+const github = require('./components/github');
 
-module.exports = {
-  SERVER_PORT,
+const config = {
+  server,
+  github,
 };
+
+module.exports = config;
