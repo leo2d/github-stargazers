@@ -4,12 +4,27 @@
     "es2020": true,
     "node": true
   },
-  "extends": ["prettier", "airbnb-base"],
+  "extends": ["prettier", "airbnb-base", "plugin:prettier/recommended"],
   "plugins": ["prettier"],
   "parserOptions": {
-    "ecmaVersion": 11
+    "ecmaVersion": 2018
+  },
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
   },
   "rules": {
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "exports": "always-multiline",
+        "functions": "never",
+        "imports": "always-multiline",
+        "objects": "always-multiline"
+      }
+    ],
+    "no-use-before-define": "off"
   }
 }
