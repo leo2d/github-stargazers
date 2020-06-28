@@ -1,18 +1,11 @@
-const express = require('express');
-const cors = require('cors');
+const config = require('./config');
+const setupApp = require('./setupApp');
 
-const { SERVER_PORT } = require('./config/config');
-const routes = require('./web/routes/routes');
+const startServer = async () => {
+  const app = setupApp();
 
-const startServer = () => {
-  const app = express();
-
-  app.use(express.json());
-  app.use(cors());
-  app.use(routes);
-
-  app.listen(SERVER_PORT, () => {
-    console.log(`EXPRESS - Server listening on port ${SERVER_PORT}!`);
+  app.listen(config.server.port, () => {
+    console.log(`EXPRESS- Server listening on port ${config.server.port}!`);
   });
 };
 
