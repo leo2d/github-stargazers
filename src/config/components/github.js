@@ -4,9 +4,13 @@ const {
   GITHUB_API_ORGS_PATH,
   GITHUB_API_PAGE_QUERY,
   GITHUB_API_PER_PAGE_QUERY,
-  GITHUB_API_PER_PAGE_LIMIT,
   GITHUB_API_TOKEN,
 } = process.env;
+
+const GITHUB_API_PER_PAGE_LIMIT = parseInt(
+  process.env.GITHUB_API_PER_PAGE_LIMIT,
+  10
+);
 
 module.exports = {
   apiBaseUrl: GITHUB_API_BASE_URL,
