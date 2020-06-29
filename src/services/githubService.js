@@ -4,7 +4,7 @@ const { addQueryString } = require('../utils/urlUtils');
 
 const searchRepositoriesByOrg = async (org) => {
   const baseUrl = buildBaseUrl(org);
-  const url = addPerPageQuantity(baseUrl);
+  const url = addPageSizeToUrl(baseUrl);
 
   const response = await requestGitHubData(
     url,
@@ -57,7 +57,7 @@ const fetchStargazers = async (pageRespositories) => {
 };
 
 const fetchRepositoryStarsNumber = async (repo) => {
-  const stargazersUrl = addPerPageQuantity(repo.stargazers_url);
+  const stargazersUrl = addPageSizeToUrl(repo.stargazers_url);
   const response = await requestGitHubData(
     stargazersUrl,
     handleResponse,
@@ -135,10 +135,10 @@ const parseLinkHeader = (linkHeader) => {
 const buildBaseUrl = (org) =>
   `${config.github.apiBaseUrl}${config.github.apiOrgsPath}/${org}${config.github.apiReposPath}`;
 
-const addPerPageQuantity = (url, quantity = config.github.apiPerPageLimit) =>
+const addPageSizeToUrl = (url, size = config.github.apiPerPageLimit) =>
   addQueryString(url, {
     key: config.github.apiPerPageQuery,
-    value: quantity,
+    value: size,
   });
 
 module.exports = { searchRepositoriesByOrg };
