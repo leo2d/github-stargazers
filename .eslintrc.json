@@ -4,7 +4,7 @@
     "es2020": true,
     "node": true
   },
-  "extends": ["prettier", "airbnb-base", "plugin:prettier/recommended"],
+  "extends": ["prettier", "plugin:prettier/recommended"],
   "plugins": ["prettier"],
   "parserOptions": {
     "ecmaVersion": 2018
@@ -25,6 +25,7 @@
         "objects": "always-multiline"
       }
     ],
-    "no-use-before-define": "off"
+    "no-use-before-define": "off",
+    "no-restricted-syntax": 0
   }
 }
