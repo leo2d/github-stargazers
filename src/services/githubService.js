@@ -47,6 +47,7 @@ const fetchRepositoriesInfo = async (response, org, prevInfo = []) => {
 
 const fetchStargazers = async (pageRespositories) => {
   const result = [];
+
   for (const repo of pageRespositories) {
     const stars = await fetchRepositoryStarsNumber(repo);
     console.log('item -> ', { name: repo.name, stars });
@@ -71,10 +72,9 @@ const fetchRepositoryStarsNumber = async (repo) => {
 
   if (!hasNextLink(headers.link)) return data.length;
 
-  const anotherPagesStars = await fetchPaginatedStarsNumber(headers.link, repo);
+  const otherPagesStars = await fetchPaginatedStarsNumber(headers.link, repo);
 
-  const reducer = (accumulator, currentValue) => accumulator + currentValue;
-  const stars = anotherPagesStars.reduce(reducer, firstPageStars);
+  const stars = otherPagesStars.reduce((pre, cur) => pre + cur, firstPageStars);
 
   return stars;
 };
@@ -91,9 +91,7 @@ const fetchPaginatedStarsNumber = async (link, repo) => {
     return requestGitHubData(url, handleStarsResponse, handleError, repo.name);
   });
 
-  const anotherPagesStars = await Promise.all(result);
-
-  return anotherPagesStars;
+  return await Promise.all(result);
 };
 
 const handleStarsResponse = (response) => {
