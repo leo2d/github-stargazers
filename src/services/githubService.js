@@ -71,28 +71,27 @@ const fetchRepositoryStarsNumber = async (repo) => {
 
   const firstPageStars = data.length;
 
-  if (!hasNextLink(headers.link)) return data.length;
+  if (!hasNextLink(headers.link)) return firstPageStars;
 
   const links = parseLinkHeader(headers.link);
   const lastLink = links.find((link) => link.rel === 'last');
 
   const middlePagesStars = (lastLink.page - 2) * config.github.apiPerPageLimit;
 
-  const lastPageStars = await requestGitHubData(
+  const lastPageResponse = await requestGitHubData(
     lastLink.href,
-    handleStarsResponse,
+    handleResponse,
     handleError,
     repo.name
   );
+
+  const lastPageStars = lastPageResponse.data.length;
 
   const stars = firstPageStars + middlePagesStars + lastPageStars;
 
   return stars;
 };
 
-const handleStarsResponse = (response) => {
-  return response.data.length;
-};
 
 const handleResponse = (response) => {
   return response;
