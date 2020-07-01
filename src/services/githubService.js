@@ -45,15 +45,17 @@ const fetchRepositoriesInfo = async (response, org, prevInfo = []) => {
 };
 
 const fetchStargazers = async (pageRespositories) => {
-  const result = [];
-
-  for (const repo of pageRespositories) {
+  const repos = pageRespositories.map(async (repo) => {
     const stars = await fetchRepositoryStarsNumber(repo);
-    console.log('item -> ', { name: repo.name, stars });
-    result.push({ name: repo.name, stars });
-  }
+    return { name: repo.name, stars };
+  });
 
-  return result;
+  const results = await Promise.all(repos);
+
+  //TODO: Remove this logs before merge to master
+  results.forEach((item) => console.log('item -> ', item));
+
+  return results;
 };
 
 const fetchRepositoryStarsNumber = async (repo) => {
