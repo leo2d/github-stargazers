@@ -75,8 +75,7 @@ const fetchRepositoryStarsNumber = async (repo) => {
   const links = parseLinkHeader(headers.link);
   const lastLink = links.find((link) => link.rel === 'last');
 
-  const middlePagesStars =
-    lastLink.page > 2 ? (lastLink.page - 2) * config.github.apiPerPageLimit : 0;
+  const middlePagesStars = (lastLink.page - 2) * config.github.apiPerPageLimit;
 
   const lastPageStars = await requestGitHubData(
     lastLink.href,
