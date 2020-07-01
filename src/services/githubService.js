@@ -72,26 +72,22 @@ const fetchRepositoryStarsNumber = async (repo) => {
 
   if (!hasNextLink(headers.link)) return data.length;
 
-  const otherPagesStars = await fetchPaginatedStarsNumber(headers.link, repo);
-
-  const stars = otherPagesStars.reduce((pre, cur) => pre + cur, firstPageStars);
-
-  return stars;
-};
-
-const fetchPaginatedStarsNumber = async (link, repo) => {
-  const links = parseLinkHeader(link);
+  const links = parseLinkHeader(headers.link);
   const lastLink = links.find((link) => link.rel === 'last');
 
-  const urls = Array.from({ length: lastLink.page - 1 }).map((_, index) => {
-    return lastLink.href.replace(`page=${lastLink.page}`, `page=${index + 2}`);
-  });
+  const middlePagesStars =
+    lastLink.page > 2 ? (lastLink.page - 2) * config.github.apiPerPageLimit : 0;
 
-  const result = urls.map((url) => {
-    return requestGitHubData(url, handleStarsResponse, handleError, repo.name);
-  });
+  const lastPageStars = await requestGitHubData(
+    lastLink.href,
+    handleStarsResponse,
+    handleError,
+    repo.name
+  );
 
-  return await Promise.all(result);
+  const stars = firstPageStars + middlePagesStars + lastPageStars;
+
+  return stars;
 };
 
 const handleStarsResponse = (response) => {
