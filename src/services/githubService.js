@@ -14,14 +14,15 @@ const searchRepositoriesByOrg = async (org) => {
   );
 
   const info = await fetchRepositoriesInfo(response, org);
+
+  //TODO: Remove this logs before merge to master
   console.log(`${org} total repos - > `, info.length);
 
-  return info.sort((a, b) => (a.stars > b.stars ? -1 : 1));
+  return info;
 };
 
 const fetchRepositoriesInfo = async (response, org, prevInfo = []) => {
   const { headers, data } = response;
-  console.log('headers link: repos -> ', headers.link);
 
   const currentInfo = await fetchStargazers(data);
 
@@ -38,8 +39,6 @@ const fetchRepositoriesInfo = async (response, org, prevInfo = []) => {
     handleError,
     org
   );
-
-  console.log('links: repos -> ', links);
 
   // eslint-disable-next-line no-return-await
   return await fetchRepositoriesInfo(currentResponse, org, info);

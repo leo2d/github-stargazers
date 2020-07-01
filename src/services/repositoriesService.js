@@ -4,9 +4,11 @@ const { searchRepositoriesByOrg } = require('./githubService');
 const getRepositoriesInfoByOrg = async (org) => {
   if (!stringUtils.stringIsValid(org)) throw new Error('Invalid args...');
 
-  const result = await searchRepositoriesByOrg(org);
+  const reposInfo = await searchRepositoriesByOrg(org);
 
-  return result;
+  const sortedRepos = reposInfo.sort((a, b) => (a.stars > b.stars ? -1 : 1));
+
+  return sortedRepos;
 };
 
 module.exports = {
