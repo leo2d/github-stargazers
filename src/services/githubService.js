@@ -1,17 +1,12 @@
 const config = require('../config');
-const { requestGitHubData } = require('../shared/request');
+const httpService = require('../shared/httpService');
 const urlUtils = require('../utils/urlUtils');
 
 const searchRepositoriesByOrg = async (org) => {
   const orgReposUrl = buildOrgRepositoriesUrl(org);
   const orgReposWithPageSize = addPageSizeToUrl(orgReposUrl);
 
-  const firstRepoPageResponse = await requestGitHubData(
-    url,
-    handleResponse,
-    handleError,
-    org
-  );
+  const firstRepoPageResponse = await fetchGitHubData(orgReposWithPageSize);
 
   const orgRepos = await fetchRepositoriesInfo(firstRepoPageResponse, org);
 
@@ -33,15 +28,10 @@ const fetchRepositoriesInfo = async (response, org, prevInfo = []) => {
   const links = parseLinkHeader(headers.link);
   const nextLink = links.find((link) => link.rel === 'next');
 
-  const currentResponse = await requestGitHubData(
-    nextLink.href,
-    handleResponse,
-    handleError,
-    org
-  );
+  const nextPageResponse = await fetchGitHubData(nextLink.href);
 
   // eslint-disable-next-line no-return-await
-  return await fetchRepositoriesInfo(currentResponse, org, info);
+  return await fetchRepositoriesInfo(nextPageResponse, org, repos);
 };
 
 const fetchStargazers = async (pageRespositories) => {
@@ -60,14 +50,9 @@ const fetchStargazers = async (pageRespositories) => {
 
 const fetchRepositoryStarsNumber = async (repo) => {
   const stargazersUrl = addPageSizeToUrl(repo.stargazers_url);
-  const response = await requestGitHubData(
-    stargazersUrl,
-    handleResponse,
-    handleError,
-    repo.name
-  );
+  const firstPageResponse = await fetchGitHubData(stargazersUrl);
 
-  const { headers, data } = response;
+  const { headers, data } = firstPageResponse;
 
   const firstPageStars = data.length;
 
@@ -78,27 +63,13 @@ const fetchRepositoryStarsNumber = async (repo) => {
 
   const middlePagesStars = (lastLink.page - 2) * config.github.apiPerPageLimit;
 
-  const lastPageResponse = await requestGitHubData(
-    lastLink.href,
-    handleResponse,
-    handleError,
-    repo.name
-  );
+  const lastPageResponse = await fetchGitHubData(lastLink.href);
 
   const lastPageStars = lastPageResponse.data.length;
 
   const stars = firstPageStars + middlePagesStars + lastPageStars;
 
   return stars;
-};
-
-
-const handleResponse = (response) => {
-  return response;
-};
-
-const handleError = (error, key = '') => {
-  console.log(key, error);
 };
 
 const hasNextLink = (link) => {
@@ -133,5 +104,26 @@ const addPageSizeToUrl = (url, size = config.github.apiPerPageLimit) =>
     key: config.github.apiPerPageQuery,
     value: size,
   });
+
+const fetchGitHubData = async (
+  url,
+  onComplete = handleResponse,
+  onError = handleError
+) => {
+  const headers = {
+    Authorization: `token ${config.github.apiAccessToken}`,
+    'User-Agent': 'github-stargazers',
+  };
+
+  return httpService.get(url, onComplete, onError, headers);
+};
+
+const handleResponse = (response) => {
+  return response;
+};
+
+const handleError = (error) => {
+  console.log('Error -> ', error);
+};
 
 module.exports = { searchRepositoriesByOrg };
