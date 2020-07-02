@@ -4,11 +4,9 @@ const urlUtils = require('../utils/urlUtils');
 
 const searchRepositoriesByOrg = async (org) => {
   const orgReposUrl = buildOrgRepositoriesUrl(org);
-  const orgReposWithPageSize = addPageSizeToUrl(orgReposUrl);
+  const orgReposUrlWithPageSize = addPageSizeToUrl(orgReposUrl);
 
-  const firstRepoPageResponse = await fetchGitHubData(orgReposWithPageSize);
-
-  const orgRepos = await fetchRepositoriesInfo(firstRepoPageResponse, org);
+  const orgRepos = await fetchRepositoriesInfo(orgReposUrlWithPageSize);
 
   //TODO: Remove this logs before merge to master
   console.log(`${org} total repos - > `, orgRepos.length);
@@ -16,22 +14,22 @@ const searchRepositoriesByOrg = async (org) => {
   return orgRepos;
 };
 
-const fetchRepositoriesInfo = async (response, org, prevInfo = []) => {
+const fetchRepositoriesInfo = async (pageUrl, prevInfo = []) => {
+  if (!pageUrl) return prevInfo;
+
+  const response = await fetchGitHubData(pageUrl);
+
   const { headers, data } = response;
 
   const pageRepos = await fetchStargazers(data);
 
   const repos = [...prevInfo, ...pageRepos];
 
-  if (!hasNextLink(headers.link)) return repos;
+  const nextPageUrl = hasNextLink(headers.link)
+    ? parseLinkHeader(headers.link).find((link) => link.rel === 'next').href
+    : null;
 
-  const links = parseLinkHeader(headers.link);
-  const nextLink = links.find((link) => link.rel === 'next');
-
-  const nextPageResponse = await fetchGitHubData(nextLink.href);
-
-  // eslint-disable-next-line no-return-await
-  return await fetchRepositoriesInfo(nextPageResponse, org, repos);
+  return await fetchRepositoriesInfo(nextPageUrl, repos);
 };
 
 const fetchStargazers = async (pageRespositories) => {
