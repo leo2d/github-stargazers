@@ -1,6 +1,7 @@
 const config = require('../config');
 const httpService = require('../shared/httpService');
 const urlUtils = require('../utils/urlUtils');
+const stringUtils = require('../utils/stringUtils');
 
 const searchRepositoriesByOrg = async (org) => {
   const orgReposUrl = buildOrgRepositoriesUrl(org);
@@ -34,7 +35,7 @@ const fetchRepositoriesInfo = async (pageUrl, prevInfo = []) => {
 
 const fetchStargazers = async (pageRespositories) => {
   const repos = pageRespositories.map(async (repo) => {
-    const stars = await fetchRepositoryStarsNumber(repo);
+    const stars = await fetchRepositoryStarsNumber(repo.stargazers_url);
     return { name: repo.name, stars };
   });
 
@@ -46,9 +47,14 @@ const fetchStargazers = async (pageRespositories) => {
   return results;
 };
 
-const fetchRepositoryStarsNumber = async (repo) => {
-  const stargazersUrl = addPageSizeToUrl(repo.stargazers_url);
-  const firstPageResponse = await fetchGitHubData(stargazersUrl);
+const fetchRepositoryStarsNumber = async (stargazersUrl) => {
+  if (!stringUtils.stringIsValid(stargazersUrl))
+    throw new Error(
+      `Invalid argument of type '${typeof stargazersUrl}' when expecting a string url`
+    );
+
+  const stargazersUrlWithPageSize = addPageSizeToUrl(stargazersUrl);
+  const firstPageResponse = await fetchGitHubData(stargazersUrlWithPageSize);
 
   const { headers, data } = firstPageResponse;
 
@@ -124,4 +130,4 @@ const handleError = (error) => {
   console.log('Error -> ', error);
 };
 
-module.exports = { searchRepositoriesByOrg };
+module.exports = { searchRepositoriesByOrg, fetchRepositoryStarsNumber };
