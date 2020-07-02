@@ -67,3 +67,48 @@ describe('fetch Repository Stars Number', () => {
     );
   });
 });
+
+describe('search Repositories By Org', () => {
+  const org = 'facebook';
+
+  beforeEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('should return data successfully with only one repos page', async () => {
+    const mockReposResponse = {
+      headers: {},
+      data: [
+        {
+          name: 'react',
+          stargazers_url: 'https://awaesomeurl/repos/facebook/react/stargazers',
+        },
+        {
+          name: 'jest',
+          stargazers_url: 'https://awaesomeurl/repos/facebook/jest/stargazers',
+        },
+      ],
+    };
+
+    const mockStargazersResposne = {
+      headers: {},
+      data: [{ name: 'james' }, { name: 'alice' }, { name: 'claire' }],
+    };
+
+    const expectedResult = [
+      { name: 'react', stars: 3 },
+      { name: 'jest', stars: 3 },
+    ];
+
+    const httpSpy = jest
+      .spyOn(httpService, 'get')
+      .mockImplementation((url) =>
+        mockGitHubResponse(url, mockReposResponse, mockStargazersResposne)
+      );
+
+    const results = await githubService.searchRepositoriesByOrg('facebook');
+
+    expect(httpSpy).toBeCalled();
+    expect(results).toStrictEqual(expectedResult);
+  });
+});
