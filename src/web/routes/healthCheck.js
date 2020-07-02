@@ -1,11 +1,10 @@
 const { Router } = require('express');
+const healthCheckController = require('../controllers/healthCheckController');
 
 const healthCheckRoutes = Router();
 
 const prefix = '/health';
 
-healthCheckRoutes.get(`${prefix}/`, (req, res) => {
-  res.json([{ source: 'server', status: 'health', date: new Date() }]);
-});
+healthCheckRoutes.get(`${prefix}/`, healthCheckController.check);
 
 module.exports = healthCheckRoutes;
