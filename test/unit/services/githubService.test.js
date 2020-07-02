@@ -111,4 +111,18 @@ describe('search Repositories By Org', () => {
     expect(httpSpy).toBeCalled();
     expect(results).toStrictEqual(expectedResult);
   });
+  it('should throws an invalid args Error with object as arg', async () => {
+    await expect(
+      githubService.fetchRepositoryStarsNumber({})
+    ).rejects.toThrowError(
+      `Invalid argument of type 'object' when expecting a string`
+    );
+  });
+  it('should throws an invalid args Error with no args', async () => {
+    await expect(
+      githubService.fetchRepositoryStarsNumber()
+    ).rejects.toThrowError(
+      `Invalid argument of type 'undefined' when expecting a string`
+    );
+  });
 });
