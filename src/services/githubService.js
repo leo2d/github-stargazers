@@ -1,6 +1,6 @@
 const config = require('../config');
 const { requestGitHubData } = require('../shared/request');
-const { addQueryString } = require('../utils/urlUtils');
+const urlUtils = require('../utils/urlUtils');
 
 const searchRepositoriesByOrg = async (org) => {
   const baseUrl = buildBaseUrl(org);
@@ -129,7 +129,7 @@ const buildBaseUrl = (org) =>
   `${config.github.apiBaseUrl}${config.github.apiOrgsPath}/${org}${config.github.apiReposPath}`;
 
 const addPageSizeToUrl = (url, size = config.github.apiPerPageLimit) =>
-  addQueryString(url, {
+  urlUtils.addQueryString(url, {
     key: config.github.apiPerPageQuery,
     value: size,
   });
