@@ -1,46 +1,56 @@
 const githubService = require('../../../src/services/githubService');
 const httpService = require('../../../src/shared/httpService');
+const { github } = require('../../../src/config');
+const { mockGitHubResponse } = require('../../mocks/githubResponseMock');
 
 describe('fetch Repository Stars Number', () => {
   beforeEach(() => {
     jest.restoreAllMocks();
   });
-  it('should return data succefully with only one page', async () => {
+  it('should return the number of stars successfully with only one stargazers page', async () => {
     const mockStargazersResposne = {
       headers: {},
       data: [{ name: 'james' }, { name: 'alice' }, { name: 'claire' }],
     };
 
+    const url = 'https://awaesomeurl/repos/facebook/react/stargazers';
     const spy = jest
       .spyOn(httpService, 'get')
-      .mockImplementation(() => mockStargazersResposne);
+      .mockImplementation(() =>
+        mockGitHubResponse(url, null, mockStargazersResposne)
+      );
 
-    const stars = await githubService.fetchRepositoryStarsNumber('someUrl');
+    const stars = await githubService.fetchRepositoryStarsNumber(url);
 
     expect(spy).toBeCalled();
     expect(spy).toBeCalledTimes(1);
 
     expect(stars).toBe(mockStargazersResposne.data.length);
   });
-  it('should return data succefully with many pages', async () => {
+  it('should return the number of stars successfully  with many stargazers pages', async () => {
     const pagesQuantity = 4;
     const mockStargazersResposne = {
       headers: {
-        link: `<https://amazingUrl/stargazers?page=2>; rel="next", <https://amazingUrl/stargazers?page=${pagesQuantity}>; rel="last"`,
+        link: `<https://awaesomeurl/repos/facebook/react/stargazers?page=2>; rel="next", <https://awaesomeurl/repos/facebook/react/stargazers?page=${pagesQuantity}>; rel="last"`,
       },
-      data: new Array(100),
+      data: new Array(github.apiPerPageLimit),
     };
 
+    const expected = github.apiPerPageLimit * pagesQuantity;
+
+    const url = 'https://awaesomeurl/repos/facebook/react/stargazers';
     const spy = jest
       .spyOn(httpService, 'get')
-      .mockImplementation(() => mockStargazersResposne);
+      .mockImplementation(() =>
+        mockGitHubResponse(url, null, mockStargazersResposne)
+      );
 
-    const stars = await githubService.fetchRepositoryStarsNumber('someUrl');
+    const stars = await githubService.fetchRepositoryStarsNumber(url);
 
     expect(spy).toBeCalled();
     expect(spy).toBeCalledTimes(2);
 
-    expect(stars).toBe(400);
+    expect(stars).toBe(expected);
   });
   it('should throws an invalid args Error with object as arg', async () => {
     await expect(
