@@ -7,8 +7,7 @@ const getRepositoriesStarsByOrg = async (req, res, next) => {
     const data = await getRepositoriesInfoByOrg(req.params.name);
     return res.json(data);
   } catch (error) {
-    console.error(error);
-    return next();
+    next(error, req, res, next);
   }
 };
 
