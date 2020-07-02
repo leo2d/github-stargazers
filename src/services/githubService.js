@@ -3,32 +3,32 @@ const { requestGitHubData } = require('../shared/request');
 const urlUtils = require('../utils/urlUtils');
 
 const searchRepositoriesByOrg = async (org) => {
-  const baseUrl = buildBaseUrl(org);
-  const url = addPageSizeToUrl(baseUrl);
+  const orgReposUrl = buildOrgRepositoriesUrl(org);
+  const orgReposWithPageSize = addPageSizeToUrl(orgReposUrl);
 
-  const response = await requestGitHubData(
+  const firstRepoPageResponse = await requestGitHubData(
     url,
     handleResponse,
     handleError,
     org
   );
 
-  const info = await fetchRepositoriesInfo(response, org);
+  const orgRepos = await fetchRepositoriesInfo(firstRepoPageResponse, org);
 
   //TODO: Remove this logs before merge to master
-  console.log(`${org} total repos - > `, info.length);
+  console.log(`${org} total repos - > `, orgRepos.length);
 
-  return info;
+  return orgRepos;
 };
 
 const fetchRepositoriesInfo = async (response, org, prevInfo = []) => {
   const { headers, data } = response;
 
-  const currentInfo = await fetchStargazers(data);
+  const pageRepos = await fetchStargazers(data);
 
-  const info = [...prevInfo, ...currentInfo];
+  const repos = [...prevInfo, ...pageRepos];
 
-  if (!hasNextLink(headers.link)) return info;
+  if (!hasNextLink(headers.link)) return repos;
 
   const links = parseLinkHeader(headers.link);
   const nextLink = links.find((link) => link.rel === 'next');
@@ -125,7 +125,7 @@ const parseLinkHeader = (linkHeader) => {
   return links;
 };
 
-const buildBaseUrl = (org) =>
+const buildOrgRepositoriesUrl = (org) =>
   `${config.github.apiBaseUrl}${config.github.apiOrgsPath}/${org}${config.github.apiReposPath}`;
 
 const addPageSizeToUrl = (url, size = config.github.apiPerPageLimit) =>
