@@ -42,14 +42,14 @@ describe('fetch Repository Stars Number', () => {
 
     expect(stars).toBe(400);
   });
-  it('should throws an invalid args Error', async () => {
+  it('should throws an invalid args Error with object as arg', async () => {
     await expect(
       githubService.fetchRepositoryStarsNumber({})
     ).rejects.toThrowError(
       `Invalid argument of type 'object' when expecting a string url`
     );
   });
-  it('should throws an invalid args Error', async () => {
+  it('should throws an invalid args Error with no args', async () => {
     await expect(
       githubService.fetchRepositoryStarsNumber()
     ).rejects.toThrowError(
