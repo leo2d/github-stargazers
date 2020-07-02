@@ -4,6 +4,11 @@ const urlUtils = require('../utils/urlUtils');
 const stringUtils = require('../utils/stringUtils');
 
 const searchRepositoriesByOrg = async (org) => {
+  if (!stringUtils.stringIsValid(org))
+    throw new Error(
+      `Invalid argument of type '${typeof org}' when expecting a string`
+    );
+
   const orgReposUrl = buildOrgRepositoriesUrl(org);
   const orgReposUrlWithPageSize = addPageSizeToUrl(orgReposUrl);
 
