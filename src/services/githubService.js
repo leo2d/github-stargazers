@@ -14,9 +14,6 @@ const searchRepositoriesByOrg = async (org) => {
 
   const orgRepos = await fetchRepositoriesInfo(orgReposUrlWithPageSize);
 
-  //TODO: Remove this logs before merge to master
-  console.log(`${org} total repos - > `, orgRepos.length);
-
   return orgRepos;
 };
 
@@ -45,9 +42,6 @@ const fetchStargazers = async (pageRespositories) => {
   });
 
   const results = await Promise.all(repos);
-
-  //TODO: Remove this logs before merge to master
-  results.forEach((item) => console.log('item -> ', item));
 
   return results;
 };
