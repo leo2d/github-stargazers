@@ -76,6 +76,31 @@ This project use some popular libraries:
     
 5. Finally you can run __yarn debug__ or __npm run debug__ to run in debug mode with nodemon or just __yarn start__ or __npm start__ to start the application
 
-6. Running Unit Tests:
+6. Now you can access ``` http://localhost:{your port}/repositories/{organization} ```, for example, ``` http://localhost:3334/repositories/facebook ``` and you will see the result in an array in the following format:
+         
+```json
+
+        [
+            {
+                "name": "react",
+                "stars": 40000
+            },
+            {
+                "name": "react-native",
+                "stars": 40000
+            },
+            {
+                "name": "create-react-app",
+                "stars": 40000
+            },
+            {
+                "name": "jest",
+                "stars": 31585
+            },
+        ]
+        
+```
+
+7. Running Unit Tests:
     1. You will need to setup a **.env.test** file in the same way as the **.env.dev** file
     2. Then you can run __yarn test__ or __npm test__ to run the test suites
