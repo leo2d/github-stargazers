@@ -113,15 +113,13 @@ describe('search Repositories By Org', () => {
   });
   it('should throws an invalid args Error with object as arg', async () => {
     await expect(
-      githubService.fetchRepositoryStarsNumber({})
+      githubService.searchRepositoriesByOrg({})
     ).rejects.toThrowError(
       `Invalid argument of type 'object' when expecting a string`
     );
   });
   it('should throws an invalid args Error with no args', async () => {
-    await expect(
-      githubService.fetchRepositoryStarsNumber()
-    ).rejects.toThrowError(
+    await expect(githubService.searchRepositoriesByOrg()).rejects.toThrowError(
       `Invalid argument of type 'undefined' when expecting a string`
     );
   });
