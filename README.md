@@ -3,7 +3,7 @@
 ### Code and code design decisions:
 
 - I decided to work with functions only instead of creating classes.
-- I decided to separate routes from consollers to avoid express dependency on controllers
+- I decided to separate routes from controllers to avoid express dependency on controllers
 - I decided to create a "htppService" to isolate Axios dependency
 - I created "githubService" to keep all the GitHub integrations in the same place. You can note that only functions that make sense to be used outside are exported.
 - Every function on the "githubService" module does not chancge params or manipulate state outsade of its scope.
