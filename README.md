@@ -1,5 +1,26 @@
 # GitHub Stargazers
 
+### Code and code design decisions:
+
+- I decided to work with functions only instead of creating classes.
+- I decided to separate routes from consollers to avoid express dependency on controllers
+- I decided to create a "htppService" to isolate Axios dependency
+- I created "githubService" to keep all the GitHub integrations in the same place. You can note that only functions that make sense to be used outside are exported.
+- Every function on the "githubService" module does not chancge params or manipulate state outsade of its scope.
+- Sort items by stars count is not a "githubService" responsibility, so at a certain point I moved this action to "repositoriesService"
+
+### Main difficulties I found during the test:
+- I lost 2 and a half days trying to understand why my stargazers' number are different from the real. So I realized that GitHub rest API limits the results to the first 40k stargazers. Searching on the internet, I don't find too much information about this problem, but I found [a reserach](https://homepages.dcc.ufmg.br/~mtov/pub/2016-icsme "research")  where this problem is mentioned and I also found [an article](https://medium.com/hackernoon/a-dive-into-freecodecamp-stargazers-667fdebfa111 "article" ) saying that its a limitation of rest API but it's possible to get all the stargazers using GraphQL. To finish, another interesting thing is that I couldn't find information about this 40k limitation in the official docs, but when we try to access more than 40k stargazers, for example, [react-native stargazers](https://api.github.com/repos/facebook/react-native/stargazers?per_page=100&page=401 "react-native stargazers"),  GitHub will return the following message "In order to keep the API fast for everyone, pagination is limited for this resource. Check the rel=last link relation in the Link response header to see how far back you can traverse.", interesting, not?. So... Due to this problem, any repository with more than 40k stars will return 40000 stars on my app ([domain]/repositories/[org]).
+- A personal comment: I really miss Typescript, but the instructions are clear about why to use Javascript and I Agree
+
+### App known mistakes and enhancements that I would like to solve if I have more time:
+- Needs more unit tests
+- Needs integration tests
+- Needs error tracking and good logging
+- Poor error handling
+- Needs a retry strategy for solve [this issue]( https://github.com/leo2d/github-stargazers/issues/1 "Issue")  
+- Add cache with Redis to avoid requesting the same data to GitHub Api in a short time
+
 
 ### Into the stack:
 
